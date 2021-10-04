@@ -32,8 +32,8 @@ def setup_telegram_constants():
             logger.info(f"Got global config use chat id : {chatid}")
             with open(yaml_file_path, "rt") as f:
                 data = f.read()
-                data = data.repalce("$TOKEN",token)
-                data = data.repalce("$CHATID",chatid)
+                data = data.replace("$TOKEN",token)
+                data = data.replace("$CHATID",chatid)
             with open(yaml_file_path, "wt") as f:
                 f.write(data)
         with open(yaml_file_path) as f:
