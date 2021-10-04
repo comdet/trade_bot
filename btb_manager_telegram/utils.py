@@ -25,6 +25,17 @@ def setup_telegram_constants():
     telegram_url = None
     yaml_file_path = os.path.join(settings.ROOT_PATH, "config/apprise.yml")
     if os.path.exists(yaml_file_path):
+        token = os.environ.get("TOKEN")
+        chatid = os.environ.get("CHATID")
+        if token and chatid:
+            data = ""
+            logger.info(f"Got global config use chat id : {chatid}")
+            with open(yaml_file_path, "rt") as f:
+                data = f.read()
+                data = data.repalce("$TOKEN",token)
+                data = data.repalce("$CHATID",chatid)
+            with open(yaml_file_path, "wt") as f:
+                f.write(data)
         with open(yaml_file_path) as f:
             try:
                 parsed_urls = yaml.load(f, Loader=yaml.FullLoader)["urls"]
