@@ -18,8 +18,6 @@ class Strategy(AutoTrader):
             end="\r",
         )
 
-        excluded_coins = []
-
         for coin in active_coins:
             coin_price = self.manager.get_sell_price(coin + self.config.BRIDGE)
 
@@ -27,12 +25,10 @@ class Strategy(AutoTrader):
                 self.logger.info("Skipping scouting... current coin {} not found".format(coin + self.config.BRIDGE))
                 continue
             
-            if self.config.ALLOW_COIN_MERGE == False:
-                #fetch active coin again to avoid some coins fusioning by jumping to the same coin in the same scout run
-                current_active_coins = self.get_active_coins()
-                excluded_coins = current_active_coins
+            #fetch active coin again to avoid some coins fusioning by jumping to the same coin in the same scout run
+            current_active_coins = self.get_active_coins()
 
-            self._jump_to_best_coin(coin, coin_price, excluded_coins)
+            self._jump_to_best_coin(coin, coin_price, current_active_coins)
 
             # if a jump fails try buying another coin to avoid the next coin takes the bridge value
             if self.failed_buy_order:
@@ -70,7 +66,7 @@ class Strategy(AutoTrader):
         active_coin_symbols = [c.symbol for c in active_coins]
         for coin in self.db.get_coins():
             #skip active coins, we dont want coin fusion
-            if self.config.ALLOW_COIN_MERGE == False and coin.symbol in active_coin_symbols:
+            if coin.symbol in active_coin_symbols:
                 continue
 
             current_coin_price = self.manager.get_sell_price(coin + self.config.BRIDGE)
